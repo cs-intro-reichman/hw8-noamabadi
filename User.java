@@ -43,18 +43,16 @@
 
     /** If this user follows the given name, returns true; otherwise returns false. */
     public boolean follows(String name) {
-        if (name == null) {
-            return false;
-        }
+        name = name.toLowerCase();
+
         for (int i = 0; i < follows.length; i++) {
-            if (follows[i].toLowerCase().equals(name.toLowerCase())) {
+            if (follows[i] != null && follows[i].toLowerCase().equals(name)) {
                 return true;
-            } 
-            
+            }
         }
         return false;
-
     }
+
     /** Makes this user follow the given name. If successful, returns true. 
      *  If this user already follows the given name, or if the follows list is full, does nothing and returns false; */
     public boolean addFollowee(String name) {
@@ -62,11 +60,11 @@
             return false;
         }
 
-        if (follows(name)) {
+        if (this.follows(name)) {
             return false;    
         }
 
-        if (fCount == maxfCount) {
+        if (this.fCount == maxfCount) {
             return false;
         }
 
@@ -78,27 +76,24 @@
     /** Removes the given name from the follows list of this user. If successful, returns true.
      *  If the name is not in the list, does nothing and returns false. */
     public boolean removeFollowee(String name) {
-        if (name == null || follows(name) == false) {
-            return false;  
+        if (name == null || fCount == 0) {
+            return false;
         }
-
-        boolean isFound = false; 
+        name = name.toLowerCase();
         for (int i = 0; i < fCount; i++) {
-            if (follows[i] == name) {
-                isFound = true;
-                follows[i] = null;
-                fCount--;
-            } 
-            if (isFound) {
-                if (i == (maxfCount - 1)) {
-                    follows[i] = null;
+            if (follows[i].toLowerCase().equals(name)) { 
+                for (int j = i; j < fCount - 1; j++) { 
+                    follows[j] = follows[j + 1];
                 }
-                follows[i] = follows[i+1];
-                
-            }
+                follows[fCount - 1] = null;
+                fCount--;
 
+                return true;
+
+            }
         }
-        return true;
+
+        return false;
     }
 
     /** Counts the number of users that both this user and the other user follow.
@@ -128,7 +123,7 @@
         }
         return false;
     }
-    
+
     /** Returns this user's name, and the names that s/he follows. */
     public String toString() {
         String ans = name + " -> ";
